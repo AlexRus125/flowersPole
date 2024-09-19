@@ -6,4 +6,3 @@ class PoolRouter:
     router = Router()
 
 
-class
