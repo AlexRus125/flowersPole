@@ -2,6 +2,7 @@ from asyncio import run
 from aiogram import Bot, Dispatcher
 from src.Routers.Communicate import FirstRouter
 from Connect import Connect
+from BotMenu import bot_commands
 
 class ExecuteFile:
 
@@ -20,6 +21,7 @@ class ExecuteFile:
 
 
         #Место для выдачи ответов от метода main
+        await bot_commands(bot)
         await bot.delete_webhook(drop_pending_updates=True)
         await dp.start_polling(bot)
 
