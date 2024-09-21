@@ -1,8 +1,13 @@
 from asyncio import run
 from aiogram import Bot, Dispatcher
-from src.Routers.Communicate import FirstRouter
-from Connect import Connect
-from BotMenu import bot_commands
+from src.routers.communicate import FirstRouter
+from connect import Connect
+from botmenu import bot_commands
+from routers.PoolRouter import PoolRouter
+from aiogram.fsm.storage.redis import RedisStorage
+
+
+
 
 class ExecuteFile:
 
@@ -11,14 +16,16 @@ class ExecuteFile:
     @staticmethod
     async def main():
 
+        storage = RedisStorage.from_url(url='redis://localhost:6379/0')
+
         #Место для подключения других объектов
         con = Connect()  # переменная с токеном бота
         bot = Bot(con.connect())
-        dp = Dispatcher()
+        dp = Dispatcher(storage=storage)
 
         #Место для подключения рутеров к основному
         dp.include_router(FirstRouter.router)
-
+        dp.include_router(PoolRouter.router)
 
         #Место для выдачи ответов от метода main
         await bot_commands(bot)
