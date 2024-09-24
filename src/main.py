@@ -29,7 +29,7 @@ class ExecuteFile:
 
         #Место для выдачи ответов от метода main
         await bot_commands(bot)
-        await bot.delete_webhook(drop_pending_updates=True)
+        await bot.delete_webhook(drop_pending_updates=True, request_timeout=1080)
         await dp.start_polling(bot)
 
 

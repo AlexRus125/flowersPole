@@ -10,8 +10,10 @@ class FsmPool(StatesGroup):
     problem_question = State()
     #Второй скриншот
 
-    '''...'''
-
+    self_solving_problem = State()
+    watering_frequency = State()
+    hole_true = State()
+    transplantation = State()
     #Третий скриншот
 
     """..."""
