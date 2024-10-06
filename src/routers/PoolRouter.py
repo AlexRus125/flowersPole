@@ -1,13 +1,15 @@
 from aiogram import Router
-from src.fsmclasses.fsmPool import FsmPool
+from src.fsmclasses.fsmPool import FsmPool, FSMImages
 from aiogram.fsm.context import FSMContext
 from aiogram import F
-from aiogram.types import Message
+from aiogram.types import Message, InputMediaVideo
 from aiogram.filters import StateFilter
 from aiogram.fsm.state import default_state
 from src.filters.valid_email import ValidEmail
-
-
+from aiogram import Bot
+from aiogram.types import ContentType as CT
+from aiogram.types.input_media import InputMedia
+from aiogram.types import InputMediaPhoto
 
 
 class PoolRouter:
@@ -29,8 +31,6 @@ async def cancel_cmd(message: Message, state: FSMContext):
     await message.answer(text="Вы вышли из опроса. К сожалению, все ваши данные не были сохранены")
 
 
-
-
 @PoolRouter.router.message(F.text == '/start_polling', StateFilter(default_state))
 async def start_polling(message: Message, state: FSMContext):
     await message.answer(text="""
@@ -45,7 +45,7 @@ async def start_polling(message: Message, state: FSMContext):
 
 
 
-@PoolRouter.router.message(ValidEmail(), StateFilter(FsmPool.email_address))
+@PoolRouter.router.message(StateFilter(FsmPool.email_address), ValidEmail())
 async def get_email(message: Message, state: FSMContext):
 
 
@@ -101,7 +101,7 @@ async def get_solve(message: Message, state: FSMContext):
 
 
 
-@PoolRouter.router.message(FsmPool.watering_frequency)
+@PoolRouter.router.message(StateFilter(FsmPool.watering_frequency))
 async def get_watering(message: Message, state: FSMContext):
 
     await message.answer(f'Хорошо, идем дальше')
@@ -111,7 +111,7 @@ async def get_watering(message: Message, state: FSMContext):
 
 
 
-@PoolRouter.router.message(FsmPool.hole_true)
+@PoolRouter.router.message(StateFilter(FsmPool.hole_true))
 async def get_hole_true(message: Message, state: FSMContext):
 
     await message.answer('Принято')
@@ -125,12 +125,44 @@ async def get_hole_true(message: Message, state: FSMContext):
 
 
 
-@PoolRouter.router.message(FsmPool.transplantation)
-async def get_trans(message: Message, state: FSMContext):
+@PoolRouter.router.message(StateFilter(FsmPool.transplantation))
+async def get_trans(message: Message, bot: Bot, state: FSMContext):
+
+    '''#! Заключительный рутер перед отправкой фоток или видео #!'''
+
 
     await message.answer('Спасибо')
     await state.update_data(trans=message.text)
-    # await cancel_cmd
-    # await state.set_state(None)
     await state.clear()
-    await message.answer('Опрос закончился')
+    await message.answer('Отправьте фото или видео')
+
+
+
+#! Самый важный рутер
+@PoolRouter.router.message(F.content_type.in_([CT.PHOTO, CT.VIDEO]))
+async def handle_message(message: Message, album: list[Message], bot: Bot):
+    media_group = []
+
+    for msg in album:
+        if msg.photo:
+            file_id = msg.photo[-1].file_id
+            media_group.append(InputMediaPhoto(media=file_id))
+
+        elif msg.video:
+
+            file_id = msg.video.file_id
+            media_group.append(InputMediaVideo(media=file_id))
+
+
+        else:
+            obj_dict = msg.dict()
+            file_id = obj_dict[msg.content_type]['file_id']
+            media_group.append(InputMedia(media=file_id))
+
+
+
+    # await message.answer_media_group(media_group)
+    await bot.send_media_group(chat_id=1041131470, media=media_group)
+    await bot.send_message(chat_id=1041131470, text='Вот тут, отдельно, будут описания проблем и т.д.')
+
+

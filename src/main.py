@@ -5,8 +5,8 @@ from connect import Connect
 from botmenu import bot_commands
 from routers.PoolRouter import PoolRouter
 from aiogram.fsm.storage.redis import RedisStorage
-
-
+# from aiogram.fsm.storage.memory import  MemoryStorage
+from filters.group_media import AlbumMiddleware
 
 
 class ExecuteFile:
@@ -16,20 +16,30 @@ class ExecuteFile:
     @staticmethod
     async def main():
 
-        storage = RedisStorage.from_url(url='redis://localhost:6379/0')
+        # storage = RedisStorage.from_url(url='redis://localhost:6379/0')
 
         #Место для подключения других объектов
         con = Connect()  # переменная с токеном бота
         bot = Bot(con.connect())
-        dp = Dispatcher(storage=storage)
+        dp = Dispatcher()
+
+
+
+
+
 
         #Место для подключения рутеров к основному
         dp.include_router(FirstRouter.router)
         dp.include_router(PoolRouter.router)
 
+
+        # Место для мидлвари
+        dp.message.middleware(AlbumMiddleware())
+
+
         #Место для выдачи ответов от метода main
         await bot_commands(bot)
-        await bot.delete_webhook(drop_pending_updates=True, request_timeout=1080)
+        await bot.delete_webhook(drop_pending_updates=True, request_timeout=100)
         await dp.start_polling(bot)
 
 
@@ -44,7 +54,7 @@ if __name__ == "__main__":
 
 
     except KeyboardInterrupt:
-        print('Connect is interrupted by CTRL+C')
+        print('Connect is interrupted by press-F')
 
 
     except Exception as e:
