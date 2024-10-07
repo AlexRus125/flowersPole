@@ -4,8 +4,6 @@ from src.routers.communicate import FirstRouter
 from connect import Connect
 from botmenu import bot_commands
 from routers.PoolRouter import PoolRouter
-from aiogram.fsm.storage.redis import RedisStorage
-# from aiogram.fsm.storage.memory import  MemoryStorage
 from filters.group_media import AlbumMiddleware
 
 
@@ -22,10 +20,6 @@ class ExecuteFile:
         con = Connect()  # переменная с токеном бота
         bot = Bot(con.connect())
         dp = Dispatcher()
-
-
-
-
 
 
         #Место для подключения рутеров к основному

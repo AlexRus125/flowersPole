@@ -28,7 +28,7 @@ async def start(message: Message):
     \n\n<em><b><u>Заполняя форму, вы даете согласие на сбор и обработку персональных данных</u></b></em>.
     """, parse_mode='html')
     sleep(0.5)
-    await message.answer("Готовы ли начать заполнять анкету?")
+    await message.answer("Чтобы начать заполнять анкету, нажмите на команду /start_polling в меню или в этом сообщении")
 
 
 @FirstRouter.router.message(F.text == '/help')

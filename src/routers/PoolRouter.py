@@ -35,8 +35,7 @@ async def cancel_cmd(message: Message, state: FSMContext):
 async def start_polling(message: Message, state: FSMContext):
     await message.answer(text="""
     Отлично, начнем!
-    \nХотим еще раз предупредить вас о том, что данные никому не передаются...
-    \n<b>А так же, для вашего же удобства, вводите корректные данные</b>
+    \n<b>Просим вас, для нашего удобства, вводите свои корректные данные!</b>
     """, parse_mode='html')
 
     await state.set_state(FsmPool.email_address)
@@ -93,9 +92,10 @@ async def get_solve(message: Message, state: FSMContext):
 
     await message.answer('Спасибо, вы прислали нам самостоятельное решение')
     await state.update_data(self_solving=message.text)
-    await message.answer('Как часто вы поливаете ваше растение?'
+    await message.answer('Следущий вопрос'
+                         '\nКак часто вы поливаете ваше растение?'
                          '\nПо каким параметрам понимаете, что пора поливать?'
-                         '\nЕсли вносите удобрения - напишите название, дозировки и как часто добавляете')
+                         '\n(Если вносите удобрения - напишите название, дозировки и как часто добавляете)')
     await state.set_state(FsmPool.watering_frequency)
 
 
@@ -104,7 +104,7 @@ async def get_solve(message: Message, state: FSMContext):
 @PoolRouter.router.message(StateFilter(FsmPool.watering_frequency))
 async def get_watering(message: Message, state: FSMContext):
 
-    await message.answer(f'Хорошо, идем дальше')
+    await message.answer(f'Хорошо, следующий вопрос')
     await state.update_data(watering=message.text)
     await message.answer('Есть ли в горшке, где находится растение, дренажное отверстие?')
     await state.set_state(FsmPool.hole_true)
@@ -117,7 +117,7 @@ async def get_hole_true(message: Message, state: FSMContext):
     await message.answer('Принято')
     await state.update_data(hole_true=message.text)
     await message.answer('Как давно вы пересаживали растение?'
-                         '\nКакой грунт использовали? Если были разрыхлители, укажите название')
+                         '\nКакой грунт использовали? Если были разрыхлители, укажите название(если не было, можно ничего не писать)')
 
     await state.set_state(FsmPool.transplantation)
 
@@ -131,16 +131,27 @@ async def get_trans(message: Message, bot: Bot, state: FSMContext):
     '''#! Заключительный рутер перед отправкой фоток или видео #!'''
 
 
-    await message.answer('Спасибо')
+    await message.answer('Спасибо!')
+    await message.answer('Подготовьте фото | видео, чтобы могли проанализировать вашу проблему')
+    await message.answer('''
+    1) Общие планы растения, чтобы было видно горшок
+    \n2) Общий план растения сверху, чтобы было видно грунт
+    \n3) Крупные планы, чтобы видны листья с лицевой стороны
+    \n4) Крупные планы, чтобы были видны листья с изнаночной стороны
+    \n5) Крупные планы, чтобы были видны соединения листа и стебля(если такое есть)
+    \n6) Общий план растения в комнате
+    \n7) Вид из окна, ближайшего к растению
+    \n8) Если рядом с растением есть приборы отопления или кондиционер, то сделайте кадр так, чтобы их было видно
+    
+    \n<b><em>Данная инструкция написана только для того, чтобы показать то, что надо прислать нам. Вам не нужно расставлять каждую цифру под соответствуйщей фоткой</em></b>''', parse_mode='html')
     await state.update_data(trans=message.text)
-    await state.clear()
-    await message.answer('Отправьте фото или видео')
+    await state.set_state(default_state)
 
 
 
 #! Самый важный рутер
-@PoolRouter.router.message(F.content_type.in_([CT.PHOTO, CT.VIDEO]))
-async def handle_message(message: Message, album: list[Message], bot: Bot):
+@PoolRouter.router.message(F.content_type.in_([CT.PHOTO, CT.VIDEO]), StateFilter(None))
+async def handle_message(message: Message, album: list[Message], bot: Bot, state: FSMContext):
     media_group = []
 
     for msg in album:
@@ -160,9 +171,17 @@ async def handle_message(message: Message, album: list[Message], bot: Bot):
             media_group.append(InputMedia(media=file_id))
 
 
+    data = await state.get_data()
+    # data = data.items()
+    answers = []
+
+    # for ans in enumerate(start=1)
+
 
     # await message.answer_media_group(media_group)
     await bot.send_media_group(chat_id=1041131470, media=media_group)
-    await bot.send_message(chat_id=1041131470, text='Вот тут, отдельно, будут описания проблем и т.д.')
+    await bot.send_message(chat_id=1041131470,
+        text=f'''
+        1){data["email_address"]}\n2){data["name_plant"]}\n3){data["problem_question"]}\n4){data["self_solving"]}\n5){data["watering"]}\n6){data["hole_true"]}\n7){data["trans"]}''')
 
 

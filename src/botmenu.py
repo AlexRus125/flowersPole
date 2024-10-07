@@ -8,7 +8,7 @@ async def bot_commands(bot: Bot):
 
     commands = [
     BotCommand(command='/start',
-               description='Начать работку'),
+               description='Общая информация для бота'),
 
     BotCommand(command='/start_polling',
                description='Начать опрос'),

@@ -19,13 +19,16 @@ class AlbumMiddleware(BaseMiddleware):
                        data: dict[str, Any]):
 
         if not message.media_group_id:
+            #если сообщение не медиа группа, то просто выполнить хэндлер и выйти
             await handler(message, data)
             return
 
         try:
+            #если сообщ - медиагруппа, то добавить в сущ. словарь под ключом сообщение, которое было отправлено
             self.album_data[message.media_group_id].append(message)
 
         except KeyError:
+            #Если такого ключа не сущ., то создаем его и туда в списке склдываем сообщение
             self.album_data[message.media_group_id] = [message]
 
             await asyncio.sleep(self.latency)
