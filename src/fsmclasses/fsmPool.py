@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 class FsmPool(StatesGroup):
     '''Класс для текстового опроса'''
     #Первый скриншот
-    email_address = State()
+    tg_name = State()
     name_plant = State()
     problem_question = State()
     #Второй скриншот

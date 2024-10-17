@@ -9,10 +9,10 @@ class ValidEmail(BaseFilter):
 
 
     async def __call__(self, message: Message):
-        email = message.text
+        tg_name = message.text
 
 
-        if "@" in email and '.' in email and len(email) >= 2:
+        if "@" in tg_name and len(tg_name) >= 2:
             return True
         else:
             return False
