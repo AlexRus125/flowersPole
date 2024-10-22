@@ -4,22 +4,22 @@ from aiogram.fsm.context import FSMContext
 
 class FsmPool(StatesGroup):
     '''Класс для текстового опроса'''
-    #Первый скриншот
+
     tg_name = State()
     name_plant = State()
     problem_question = State()
-    #Второй скриншот
+
 
     self_solving_problem = State()
     watering_frequency = State()
     hole_true = State()
     transplantation = State()
-    #Третий скриншот
+    win_and_floor = State()
+    some_important = State()
+    final_state = State()
 
-    """..."""
 
 
-    #Четвертый скриншот
 
 
 class FSMImages(StatesGroup):

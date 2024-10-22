@@ -11,11 +11,11 @@ async def bot_commands(bot: Bot):
         BotCommand(command='/start_polling',
                    description='Начать опрос'),
 
-        BotCommand(command='/cancel',
-                   description='Прекратить опрос'),
-
-        BotCommand(command='/report',
-                   description='Ваши предложения, что бы вы хотели добавить'),
+        # BotCommand(command='/cancel',
+        #            description='Прекратить опрос'),
+        #
+        # BotCommand(command='/report',
+        #            description='Ваши предложения, что бы вы хотели добавить'),
     ]
 
     await bot.set_my_commands(commands, scope=BotCommandScopeDefault())
