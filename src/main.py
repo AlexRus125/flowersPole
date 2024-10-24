@@ -1,9 +1,9 @@
 from asyncio import run
 from aiogram import Bot, Dispatcher
-from src.routers.communicate import FirstRouter
+from src.Routers.communicate import FirstRouter
 from connect import Connect
 from botmenu import bot_commands
-from routers.PoolRouter import PoolRouter
+from Routers.PoolRouter import PoolRouter
 from filters.group_media import AlbumMiddleware
 
 
