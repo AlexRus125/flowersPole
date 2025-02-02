@@ -9,7 +9,7 @@ class AlbumMiddleware(BaseMiddleware):
 
     album_data: dict = {}
 
-    def __init__(self, latency: Union[int, float]=4):
+    def __init__(self, latency: Union[int, float]=5):  #Запас времени для отправки других сообщений
         self.latency = latency
 
 

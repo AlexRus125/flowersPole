@@ -232,8 +232,8 @@ async def handle_message(message: Message, album: list[Message], bot: Bot, state
     data = await state.get_data()
 
 
-    await bot.send_media_group(chat_id=6175927940, media=media_group)  #33626334
-    await bot.send_message(chat_id=6175927940,
+    await bot.send_media_group(chat_id=237294966, media=media_group)  #33626334  менеджер: 6175927940
+    await bot.send_message(chat_id=237294966,
         text=f'''
         Ник в телеграмме - {data["tg_name"]}
         \n1/8) {data["name_plant"]}
